@@ -1,10 +1,8 @@
----
 -
   hosts: target2
   name: "deploy website from ansible"
   tasks:
-    -
-      name: "install extra"
+    - name: "install extra"
       yum:
         name:
           - epel-release
@@ -13,34 +11,34 @@
           - mysql-devel
           - gcc
           - MySQL-python
-    -
-      name: "install firewalld"
+
+    - name: "install firewalld"
       yum: "name=firewalld state=present"
-    -
-      name: "reload service firewalld"
+
+    - name: "reload service firewalld"
       systemd: "name=firewalld state=reloaded"
-    -
-      name: "start service firewalld, if not started"
+
+    - name: "start service firewalld, if not started"
       service: "name=firewalld state=started"
-    -
-      name: "enable service firewalld"
+
+    - name: "enable service firewalld"
       service:
         enabled: "yes"
         name: firewalld
-    -
-      name: "install mariadb-server"
+
+    - name: "install mariadb-server"
       yum: "name=mariadb-server state=present"
-    -
-      name: "start service  mariadb, if not started"
+
+    - name: "start service  mariadb, if not started"
       service: "name=mariadb state=started"
-    -
-      name: "enable service Mariadb"
+
+    - name: "enable service Mariadb"
       service: "name=mariadb enabled=yes"
-    -
-      firewalld: "port=3306/tcp permanent=yes state=enabled"
+
+    - firewalld: "port=3306/tcp permanent=yes state=enabled"
       name: "permit traffic for sql service"
-    -
-      name: "reload service firewalld"
+
+    - name: "reload service firewalld"
       systemd: "name=firewalld state=reloaded"
 
     -  name: "Create a new database with name 'ecomdb'"
@@ -50,6 +48,7 @@
 
     - name: "Create database user with name 'ecomuser' and password 'ecompassword' with all database privileges"
       mysql_user: "name=ecomuser  password=ecompassword  priv=*.*:ALL state=present check_implicit_admin=yes"
+
     - name: "Creating a file with content"
       copy:
         content: |
@@ -71,34 +70,30 @@
     - name: "reload service firewalld"
       systemd: "name=firewalld state=reloaded"
 
-    -
-      name: "install httpd"
+    - name: "install httpd"
       yum:
         name: httpd
-    -
-      name: "install php"
+
+    - name: "install php"
       yum:
         name:
           - php
           - php-mysql
 
-    -
-      name: "Change DirectoryIndex index.html to DirectoryIndex index.php to make the php page the default page"
+    - name: "Change DirectoryIndex index.html to DirectoryIndex index.php to make the php page the default page"
       replace:
         path: /etc/httpd/conf/httpd.conf
         regexp: "DirectoryIndex index.html"
         replace: "DirectoryIndex index.php"
 
-    -
-      name: "start service httpd, if not started"
+    - name: "start service httpd, if not started"
       service: "name=httpd state=started"
-    -
-      name: "enable service firewalld"
+    - name: "enable service firewalld"
       service:
         enabled: "yes"
         name: firewalld
-    -
-      name: "install git"
+        
+    - name: "install git"
       yum: "name=git state=present"
     -
       git:
@@ -106,8 +101,8 @@
         force: true
         repo: "https://github.com/kodekloudhub/learning-app-ecommerce.git"
       name: "Clone repository to /var/www/html/"
-    -
-      name: "Change DirectoryIndex index.html to DirectoryIndex index.php to make the php page the default page"
+
+    - name: "Change DirectoryIndex index.html to DirectoryIndex index.php to make the php page the default page"
       replace:
         path: /var/www/html/index.php
         regexp: "172.20.1.101"
