@@ -1,6 +1,6 @@
 ---
 
-  name: "deploy website from ansible"
+- name: "deploy website from ansible"
   hosts: target2
   tasks:
     - name: "install extra"
