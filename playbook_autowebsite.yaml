@@ -96,12 +96,12 @@
         
     - name: "install git"
       yum: "name=git state=present"
-    -
+    -name: "Clone repository to /var/www/html/"
       git:
         dest: /var/www/html/
         force: true
         repo: "https://github.com/kodekloudhub/learning-app-ecommerce.git"
-      name: "Clone repository to /var/www/html/"
+      
 
     - name: "Change DirectoryIndex index.html to DirectoryIndex index.php to make the php page the default page"
       replace:
