@@ -14,10 +14,14 @@
           - MySQL-python
 
     - name: "install firewalld"
-      yum: "name=firewalld state=present"
+      yum:
+        name: firewalld
+        state: present
 
     - name: "reload service firewalld"
-      systemd: "name=firewalld state=reloaded"
+      systemd:
+        name: firewalld
+        state: reloaded
 
     - name: "start service firewalld, if not started"
       service: "name=firewalld state=started"
@@ -28,7 +32,9 @@
         name: firewalld
 
     - name: "install mariadb-server"
-      yum: "name=mariadb-server state=present"
+      yum:
+        name: mariadb-server
+        state: present
 
     - name: "start service  mariadb, if not started"
       service: "name=mariadb state=started"
@@ -36,8 +42,12 @@
     - name: "enable service Mariadb"
       service: "name=mariadb enabled=yes"
 
-    - firewalld: "port=3306/tcp permanent=yes state=enabled"
-      name: "permit traffic for sql service"
+    - name: "Permit traffic for SQL service (port 3306)"
+      firewalld:
+        port: 3306/tcp
+        permanent: yes
+        state: enabled
+        immediate: yes
 
     - name: "reload service firewalld"
       systemd: "name=firewalld state=reloaded"
@@ -48,7 +58,12 @@
         state: present
 
     - name: "Create database user with name 'ecomuser' and password 'ecompassword' with all database privileges"
-      mysql_user: "name=ecomuser  password=ecompassword  priv=*.*:ALL state=present check_implicit_admin=yes"
+      mysql_user:
+        name: ecomuser
+        password: ecompassword
+        priv: '*.*:ALL'
+        state: present
+        check_implicit_admin: yes
 
     - name: "Creating a file with content"
       copy:
@@ -66,7 +81,11 @@
 
 
     - name: "permit traffic for http"
-      firewalld: "port=80/tcp permanent=yes state=enabled"
+      firewalld:
+        port: 80/tcp
+        permanent: yes
+        state: enabled
+        immediate: yes
 
     - name: "reload service firewalld"
       systemd: "name=firewalld state=reloaded"
@@ -85,7 +104,7 @@
       replace:
         path: /etc/httpd/conf/httpd.conf
         regexp: "DirectoryIndex index.html"
-        replace: "DirectoryIndex index.php"
+        replace: 'DirectoryIndex index.php index.html'
 
     - name: "start service httpd, if not started"
       service: "name=httpd state=started"
@@ -96,16 +115,16 @@
         
     - name: "install git"
       yum: "name=git state=present"
-    -name: "Clone repository to /var/www/html/"
+    - name: "Clone repository to /var/www/html/"
       git:
         dest: /var/www/html/
         force: true
         repo: "https://github.com/kodekloudhub/learning-app-ecommerce.git"
       
 
-    - name: "Change DirectoryIndex index.html to DirectoryIndex index.php to make the php page the default page"
+    - name: "Replace hardcoded DB host IP with 'localhost' in index.php"
       replace:
         path: /var/www/html/index.php
         regexp: "172.20.1.101"
-        replace: localhost
+        replace: 'localhost'
  
